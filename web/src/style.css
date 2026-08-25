@@ -1,0 +1,89 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+/* Field-guide colours: paper, ink, and a forest green. */
+:root {
+  --paper: #f6f4ee;
+  --card: #fffdf8;
+  --ink: #22251f;
+  --muted: #6f7268;
+  --line: #e0dcd0;
+  --green: #1f5136;
+  --green-soft: #e6efe8;
+  --amber: #b7791f;
+}
+
+.dark {
+  --paper: #131612;
+  --card: #1b1f1a;
+  --ink: #eceadf;
+  --muted: #9aa093;
+  --line: #2c322b;
+  --green: #7cc79b;
+  --green-soft: #1e2a22;
+  --amber: #d9a441;
+}
+
+body {
+  margin: 0;
+  background-color: var(--paper);
+  color: var(--ink);
+  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", sans-serif;
+}
+
+h1, h2, h3, .serif {
+  font-family: "Iowan Old Style", Georgia, ui-serif, serif;
+}
+
+@layer components {
+  .card {
+    background-color: var(--card);
+    border: 1px solid var(--line);
+    border-radius: 14px;
+  }
+
+  .btn {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition;
+    background-color: var(--green);
+    color: #fff;
+  }
+  .btn:hover:not(:disabled) { filter: brightness(1.1); }
+  .btn:disabled { opacity: 0.5; cursor: not-allowed; }
+
+  .btn-ghost {
+    @apply inline-flex items-center justify-center gap-2 rounded-full px-4 py-2 text-sm font-medium transition;
+    border: 1px solid var(--line);
+    color: var(--ink);
+    background: transparent;
+  }
+  .btn-ghost:hover { background-color: var(--green-soft); }
+
+  .chip {
+    @apply inline-flex items-center gap-1 rounded-full px-2.5 py-0.5 text-xs;
+    background-color: var(--green-soft);
+    color: var(--green);
+  }
+
+  .muted { color: var(--muted); }
+}
+
+/* the drop target */
+.dropzone {
+  border: 2px dashed var(--line);
+  border-radius: 16px;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.dropzone.dragging {
+  border-color: var(--green);
+  background-color: var(--green-soft);
+}
+
+.spinner {
+  width: 18px; height: 18px;
+  border: 2px solid var(--line);
+  border-top-color: var(--green);
+  border-radius: 50%;
+  animation: spin 0.8s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }

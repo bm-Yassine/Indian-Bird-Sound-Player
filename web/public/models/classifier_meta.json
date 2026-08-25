@@ -1,0 +1,43 @@
+{
+  "classes": [
+    "Asian Green Bee Eater",
+    "Brown Headed Barbet",
+    "Cattle Egret",
+    "Common Kingfisher",
+    "Common Myna",
+    "Common Rosefinch",
+    "Common Tailorbird",
+    "Coppersmith Barbet",
+    "Forest Wagtail",
+    "Gray Wagtail",
+    "Hoopoe",
+    "House Crow",
+    "Indian Grey Hornbill",
+    "Indian Peacock",
+    "Indian Pitta",
+    "Indian Roller",
+    "Jungle Babbler",
+    "Northern Lapwing",
+    "Red Wattled Lapwing",
+    "Ruddy Shelduck",
+    "Rufous Treepie",
+    "Sarus Crane",
+    "White Breasted Kingfisher",
+    "White Breasted Waterhen",
+    "White Wagtail"
+  ],
+  "input_size": 64,
+  "mean": [
+    0.485,
+    0.456,
+    0.406
+  ],
+  "std": [
+    0.229,
+    0.224,
+    0.225
+  ],
+  "architecture": "team CNN (5 conv layers)",
+  "detector_input_size": 640,
+  "note": "original course model - replace with the retrained one when ready"
+}

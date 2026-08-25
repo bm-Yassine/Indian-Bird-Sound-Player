@@ -5,3 +5,8 @@ Pillow
 numpy
 opencv-python
 ultralytics
+
+# only needed to run scripts/export_onnx.py
+onnx
+onnxruntime
+onnxscript

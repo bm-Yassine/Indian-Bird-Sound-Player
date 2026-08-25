@@ -1,40 +1,47 @@
-import os
+"""Finding the call that belongs to a species.
+
+The original version kept a hand-written map from species name to file name.
+The classifier emits names with spaces ("Cattle Egret") while the map was keyed
+with underscores ("Cattle_Egret"), so 23 of the 25 birds reported "No Audio
+Available" even though every mp3 was sitting in assets/sounds. Deriving the
+file name from the species name removes the chance of that drifting again.
+"""
+
+from pathlib import Path
+
+ASSETS_DIR = Path(__file__).resolve().parent.parent / "assets" / "sounds"
+
+
+def _candidates(species_name: str):
+    """File names this species might be stored under."""
+    underscored = "_".join(species_name.split())
+    yield f"{underscored}.mp3"
+    # a couple of files were saved with different capitalisation
+    yield f"{underscored.lower()}.mp3"
+    yield f"{underscored.title()}.mp3"
+
 
 class AudioManager:
-    def __init__(self, assets_dir="assets/sounds"):
-        self.assets_dir = assets_dir
-        # Mapa: Nazwa klasy (z CLASS_NAMES) -> nazwa pliku
-        self.sound_map = {
-            "Indian Peacock": "Indian_Peacock.mp3",
-	    "Asian_Green_Bee_eater": "Asian_Green_Bee_eater.mp3",
-	    "Cattle_Egret": "Cattle_Egret.mp3",
-            "Common_Kingfisher": "Common_Kingfisher.mp3",
-            " Common_Myna": " Common_Myna.mp3",
-            "Common_Rosefinch": "Common_Rosefinch.mp3",
-            "Common_Tailorbird": "Common_Tailorbird.mp3",
-            "Coppersmith_Barbet": "Coppersmith_Barbet.mp3",
-            "Forest_Wagtail": "Forest_Wagtail.mp3",
-            "Gray_Wagtail": "Gray_Wagtail.mp3",        
-            "Hoopoe": "Hoopoe.mp3",     
-            "House_Crow": "House_Crow.mp3",     
-            "Indian_Grey_Hornbill": "Indian_Grey_Hornbill.mp3",     
-            "Indian_Pitta": "Indian_Pitta.mp3",     
-            "Indian_Roller": "Indian_Roller.mp3",     
-            "Jungle_Babbler": "Jungle_Babbler.mp3",     
-            "Northern_Lapwing": "Northern_Lapwing.mp3",     
-            "Red_Wattled_Lapwing": "Red_Wattled_Lapwing.mp3",     
-            "Ruddy_Shelduck": "Ruddy_Shelduck.mp3",     
-            "Rufous_Treepie": "Rufous_Treepie.mp3",     
-            "Sarus_Crane": "Sarus_Crane.mp3",     
-            "White_Breasted_Kingfisher": "White_Breasted_Kingfisher.mp3",   
-            "White_Breasted_Waterhen": "White_Breasted_Waterhen.mp3",   
-            "White_Wagtail": "White_Wagtail.mp3",   
-}
+    def __init__(self, assets_dir: Path | str = ASSETS_DIR):
+        self.assets_dir = Path(assets_dir)
 
-    def get_audio_path(self, species_name):
-        filename = self.sound_map.get(species_name)
-        if filename:
-            path = os.path.join(self.assets_dir, filename)
-            if os.path.exists(path):
-                return path
+    def get_audio_path(self, species_name: str) -> str | None:
+        """Absolute path to this species' call, or None if we don't have one."""
+        if not species_name:
+            return None
+
+        for name in _candidates(species_name):
+            path = self.assets_dir / name
+            if path.exists():
+                return str(path)
+
+        # last resort: case-insensitive match against whatever is on disk
+        wanted = "".join(species_name.lower().split())
+        for path in self.assets_dir.glob("*.mp3"):
+            if "".join(path.stem.lower().split("_")) == wanted:
+                return str(path)
         return None
+
+    def missing_species(self, species_names) -> list[str]:
+        """Which species have no sound file - handy for a startup check."""
+        return [name for name in species_names if self.get_audio_path(name) is None]

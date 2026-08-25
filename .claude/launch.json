@@ -1,0 +1,16 @@
+{
+  "version": "0.0.1",
+  "configurations": [
+    {
+      "name": "bird-web",
+      "runtimeExecutable": "npm",
+      "runtimeArgs": [
+        "run",
+        "dev",
+        "--prefix",
+        "/Users/yb/Dev/Polsl-Projects/AI-project/Indian-Bird-Sound-Player/web"
+      ],
+      "autoPort": true
+    }
+  ]
+}
