@@ -1,0 +1,50 @@
+[
+  {
+    "file": "samples/indian-peacock.jpg",
+    "species": "Indian Peacock",
+    "author": "Kandukuru Nagarjun from Bangalore, India",
+    "licence": "CC BY 2.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Peacock_on_tree_(52077240794).jpg"
+  },
+  {
+    "file": "samples/common-kingfisher.jpg",
+    "species": "Common Kingfisher",
+    "author": "Tony Wood",
+    "licence": "CC BY 2.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by/2.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Alcedo_atthis_-England-8_(cropped).jpg"
+  },
+  {
+    "file": "samples/hoopoe.jpg",
+    "species": "Hoopoe",
+    "author": "Keta",
+    "licence": "CC BY-SA 2.5",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/2.5",
+    "source": "https://commons.wikimedia.org/wiki/File:Upupa_epops_Madrid_01.jpg"
+  },
+  {
+    "file": "samples/indian-roller.jpg",
+    "species": "Indian Roller",
+    "author": "Mahmadanesh",
+    "licence": "CC BY 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Indian_roller_-_Timbi_Lake,_Vadodara_2023-12-03.jpg"
+  },
+  {
+    "file": "samples/common-myna.jpg",
+    "species": "Common Myna",
+    "author": "Gerrie van Vuuren",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Acridotheres_tristis00.jpg"
+  },
+  {
+    "file": "samples/sarus-crane.jpg",
+    "species": "Sarus Crane",
+    "author": "Charles J. Sharp",
+    "licence": "CC BY-SA 4.0",
+    "licenceUrl": "https://creativecommons.org/licenses/by-sa/4.0",
+    "source": "https://commons.wikimedia.org/wiki/File:Sarus_crane_(Grus_antigone).jpg"
+  }
+]

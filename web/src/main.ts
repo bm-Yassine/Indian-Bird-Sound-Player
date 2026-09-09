@@ -29,6 +29,8 @@ app.innerHTML = `
       <input id="file" type="file" accept="image/*" class="hidden" />
     </label>
 
+    <section id="samples" class="mt-4"></section>
+
     <section id="results" class="mt-8"></section>
 
     <p class="mt-10 text-xs muted">
@@ -43,6 +45,7 @@ const statusText = document.getElementById("status-text") as HTMLSpanElement;
 const dropzone = document.getElementById("dropzone") as HTMLLabelElement;
 const fileInput = document.getElementById("file") as HTMLInputElement;
 const results = document.getElementById("results") as HTMLElement;
+const samplesBox = document.getElementById("samples") as HTMLElement;
 
 // ------------------------------------------------------------------ theme
 
@@ -72,6 +75,59 @@ loadModels((message) => (statusText.textContent = message))
       <span class="muted">could not load the models: ${String(error)}</span>`;
   });
 
+// ------------------------------------------------------------------ samples
+
+// Photos to try without hunting for one. They are committed under
+// public/samples together with who took them - see scripts/fetch-samples.mjs.
+type Sample = {
+  file: string;
+  species: string;
+  author: string;
+  licence: string;
+  licenceUrl: string;
+  source: string;
+};
+
+fetch("/samples/samples.json")
+  .then((response) => (response.ok ? response.json() : []))
+  .then((samples: Sample[]) => samples.length && showSamples(samples))
+  .catch(() => {
+    /* no samples shipped - the dropzone is enough */
+  });
+
+function showSamples(samples: Sample[]) {
+  samplesBox.innerHTML = `
+    <p class="mb-2 text-sm muted">No bird photo to hand? Try one of these:</p>
+    <div class="flex flex-wrap gap-2">
+      ${samples
+        .map(
+          (sample, index) => `
+        <button class="sample" data-sample="${index}" title="${sample.species}">
+          <img src="/${sample.file}" alt="${sample.species}" loading="lazy" />
+          <span>${sample.species}</span>
+        </button>`,
+        )
+        .join("")}
+    </div>
+    <p class="mt-2 text-xs muted">
+      Sample photos from Wikimedia Commons —
+      ${samples
+        .map(
+          (sample) =>
+            `<a class="underline" target="_blank" rel="noreferrer" href="${sample.source}">${sample.species}</a>
+             by ${sample.author} (${sample.licence})`,
+        )
+        .join(" · ")}
+    </p>`;
+
+  samplesBox.querySelectorAll<HTMLButtonElement>("[data-sample]").forEach((button) => {
+    button.onclick = () => {
+      const sample = samples[Number(button.dataset.sample)];
+      if (sample) void analyse(`/${sample.file}`);
+    };
+  });
+}
+
 // ------------------------------------------------------------------ input
 
 dropzone.addEventListener("dragover", (e) => {
@@ -91,19 +147,25 @@ fileInput.addEventListener("change", () => {
 });
 
 async function handleFile(file: File) {
-  if (!ready) {
-    statusText.textContent = "still loading the models — one moment…";
-    return;
-  }
   if (!file.type.startsWith("image/")) {
     results.innerHTML = `<p class="muted">That doesn't look like an image.</p>`;
     return;
   }
+  await analyse(URL.createObjectURL(file));
+}
+
+// Both ways in end up here: a photo the visitor picked, or one of the samples.
+async function analyse(source: string) {
+  if (!ready) {
+    statusText.textContent = "still loading the models — one moment…";
+    return;
+  }
 
   const image = new Image();
-  image.src = URL.createObjectURL(file);
+  image.src = source;
   await image.decode();
 
+  results.scrollIntoView({ behavior: "smooth", block: "nearest" });
   results.innerHTML = `<div class="card flex items-center gap-3 p-4 text-sm"><div class="spinner"></div>
     <span class="muted">looking for birds…</span></div>`;
 

@@ -79,6 +79,28 @@ h1, h2, h3, .serif {
   background-color: var(--green-soft);
 }
 
+/* the "try one of these" thumbnails */
+.sample {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 4px 10px 4px 4px;
+  border: 1px solid var(--line);
+  border-radius: 999px;
+  font-size: 13px;
+  transition: border-color 0.15s ease, background-color 0.15s ease;
+}
+.sample:hover {
+  border-color: var(--green);
+  background-color: var(--green-soft);
+}
+.sample img {
+  width: 36px;
+  height: 36px;
+  border-radius: 50%;
+  object-fit: cover;
+}
+
 .spinner {
   width: 18px; height: 18px;
   border: 2px solid var(--line);

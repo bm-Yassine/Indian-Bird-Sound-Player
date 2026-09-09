@@ -26,7 +26,7 @@
     "White Breasted Waterhen",
     "White Wagtail"
   ],
-  "input_size": 64,
+  "input_size": 224,
   "mean": [
     0.485,
     0.456,
@@ -37,7 +37,7 @@
     0.224,
     0.225
   ],
-  "architecture": "team CNN (5 conv layers)",
   "detector_input_size": 640,
-  "note": "original course model - replace with the retrained one when ready"
+  "architecture": "efficientnet_b0",
+  "val_accuracy": 0.9143167028199566
 }

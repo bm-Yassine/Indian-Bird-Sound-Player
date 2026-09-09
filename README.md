@@ -32,7 +32,9 @@ the repo so the app works from any directory, weights load with `weights_only=Tr
 the classifier returns its top three guesses — which matters, because it is often unsure.
 
 **New: a browser version** (`web/`) with the models exported to ONNX, per-bird result
-cards, a short field-guide note for each species, and the call playable inline.
+cards, a short field-guide note for each species, and the call playable inline. If you
+haven't got a bird photo to hand there are six sample ones under the drop zone — one
+click runs the whole thing.
 
 ## Running it
 
@@ -57,15 +59,37 @@ The detector is decent: mAP@0.5 of 0.742 from 1250 hand-annotated photos. Its re
 off at higher confidence, so quiet detections are often still correct — that is why the web
 app keeps the threshold low and shows the detection confidence per bird.
 
-The **classifier is the weak part**. It was trained on 64×64 crops, which throws away most
-of the detail, and it shows: the project report has it calling an Indian Peacock at 47% and
-a Cattle Egret at 23%. The app says so out loud when a guess is under 50%, rather than
-presenting a coin flip as an identification.
+**The classifier used to be the weak part** — the course version was trained on 64×64
+crops, and the project report has it calling an Indian Peacock at 47% and a Cattle Egret at
+23%. It has been retrained: an EfficientNet-B0 fine-tuned at 224×224 on the same 25
+species, **91.5% on 5,532 held-out validation images**, per species between 81% (Northern
+Lapwing) and 97% (Common Rosefinch).
 
-`training/retrain_classifier.ipynb` is a Colab notebook that fine-tunes a pretrained
-EfficientNet-B0 at 224×224 on the same 25 species, reports per-species accuracy and the
-most common mix-ups, and exports a drop-in ONNX replacement. The dataset is ~16 GB, which
-is why it trains in Colab rather than on a laptop.
+What it still confuses is worth knowing, because the pairs make sense: the two lapwings for
+each other, Jungle Babbler and Rufous Treepie, the two barbets. The app shows its top three
+guesses and warns under 50%, so a close call reads as a close call.
+
+The browser app ships this retrained model; the desktop app still loads the course CNN.
+
+That number is a 15% split of the same dataset, so photos taken elsewhere are harder than
+it suggests. A cattle egret photographed on a beach in Egypt — nothing like the fields the
+training photos come from — comes back as a Sarus Crane at 82%.
+
+`training/retrain_classifier.ipynb` is the notebook that produced it: it reports per-species
+accuracy and the most common mix-ups, and exports a drop-in ONNX replacement. The dataset
+is ~16 GB, which is why it trains on a hosted GPU rather than on a laptop.
+
+It runs on **Kaggle** or **Colab** and works out which from the paths it finds. Kaggle is
+the hands-off one: the dataset is already there (*Add Input* → `birds25-cleaned`) and
+*Save Version → Save & Run All* runs it in the background with the browser closed — but
+GPU and *Internet* both need a phone-verified account, and the pretrained weights can't
+download without Internet.
+
+On Colab it is built to be run in pieces, because free Colab drops you. The first run
+shrinks the 25 species to 256px and tars that copy onto Drive (~1–2 GB), so later sessions
+skip the 16 GB download entirely; every epoch writes a checkpoint next to it, and rerunning
+resumes from there. Set `EPOCHS_THIS_RUN` to 2 or 3 to stop deliberately and continue in
+another sitting.
 
 ## Layout
 
@@ -77,10 +101,13 @@ trained_models/          the team's trained weights
 assets/sounds/           25 bird calls
 scripts/export_onnx.py   exports both models for the browser, int8-quantising
                          the detector only if the boxes still agree with fp32
-training/                the Colab retraining notebook
+training/                the retraining notebook (Kaggle or Colab)
 web/                     the browser app (TypeScript + onnxruntime-web)
   src/lib/birds.ts       preprocessing, the detector, NMS, the classifier
   src/lib/species.ts     a short note and a Wikipedia link per species
+  scripts/fetch-samples.mjs  refreshes the sample photos from Wikimedia Commons,
+                         keeping only openly licensed ones and recording who took them
+  public/samples/        those photos, committed, with samples.json crediting each
 data_for_the_report/     training curves and confusion matrices
 ```
 
@@ -90,3 +117,7 @@ Code is MIT, as in the original repo. The models were trained on the
 [birds25-cleaned](https://www.kaggle.com/datasets/pavangawande/birds25-cleaned) dataset
 (CC BY-NC 4.0 — non-commercial), so treat anything derived from them the same way.
 Species notes are deliberately brief and link to Wikipedia rather than restating it.
+
+The six sample photos in `web/public/samples/` come from Wikimedia Commons under CC BY or
+CC BY-SA; each one's photographer, licence and source page is listed in `samples.json` and
+shown under the sample row in the app.
